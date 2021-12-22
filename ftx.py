@@ -1,88 +1,48 @@
-import datetime
 import requests
-import threading
-import time
 import json
+import time
 
-f = open('config.json',)
-config = json.load(f)
-
-OLD_NFTS = []
-collections = config['collections']
-avatar_url = config['avatar_url']
-
-
-# def delete_nft(NFT):
-#     global OLD_NFTS
-#     print("Deleting : " + NFT['name'] + " in 10 minutes")
-#     time.sleep(600)
-#     OLD_NFTS.remove(NFT)
-
-
-def getDate():
-    return datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-
-
-def sendCode(name, price, img, nft_url, webhook_name, webhook_url, footer_name, footer_image_url, collection):
-    data = {
-        "embeds": [
-            {
-                "title": name,
-                "description": "Price : " + price + " sol",
-                "url": nft_url,
-                "fields": [
-                    {
-                        "name": "Collection",
-                        "value": "[" + collection + "]" + "(" + "https://ftx.us/nfts/collection/" + collection + ")"
-                    }
-                ],
-                "thumbnail": {
-                    "url": img
-                },
-                "footer": {
-                    "text": footer_name + " | " + getDate(),
-                    "icon_url": footer_image_url
-                },
-            }
-        ],
-        "username": "FTX",
-        "avatar_url": avatar_url
-    }
-    result = requests.post(webhook_url, json=data)
-    try:
-        result.raise_for_status()
-    except requests.exceptions.HTTPError as err:
-        print(err)
-    else:
-        print("Webhook sent to : " + webhook_name)
-
-
-def monitor(collection, price, webhooks):
-    while True:
+def main():
+        collection = "Parallel"
         response = requests.get(
-            'https://ftx.us/api/nft/nfts_filtered?startInclusive=0&endExclusive=1000000000&nft_filter_string={"collection":"' + collection + '","nftAuctionFilter":"all","minPriceFilter":null,"maxPriceFilter":null,"seriesFilter":[],"traitsFilter":{},"include_not_for_sale":true}&sortFunc=[object Object]')
+            'https://ftx.us/api/nft/nfts_filtered?startInclusive=0&endExclusive=1000000000&nft_filter_string={"collection":"' + 
+            collection + '","nftAuctionFilter":"buyNow","minPriceFilter":null,"maxPriceFilter":null,"seriesFilter":[],"traitsFilter":{},"include_not_for_sale":true}&sortFunc=name_asc')
+        token_id=''
+        base_os_url = "https://api.opensea.io/api/v1/asset/"
+        asset_contract_address = '0x76BE3b62873462d2142405439777e971754E8E77'  # Currently set to Parallel
+
         try:
-            for NFTS in response.json()['result']['nfts']:
-                if NFTS['offerPrice'] != None and NFTS['offerPrice'] <= price:
-                    if NFTS not in OLD_NFTS:
-                        OLD_NFTS.append(NFTS)
-                        for webhook in webhooks:
-                            sendCode(NFTS['name'], str(NFTS['offerPrice']), NFTS['imageUrl'], "https://ftx.us/nfts/token/" +
-                                     NFTS['id'], webhook['name'], webhook['url'], webhook['footer_name'], webhook['footer_image_url'], collection)
-                        delete_nft_thread = threading.Thread(
-                            target=delete_nft, args=(NFTS,))
-                        delete_nft_thread.start()
+            last_token_id=''
+            for NFT in response.json()['result']['nfts']:
+                # print(NFT)
+                #print(NFT['ethTokenId']+" - "+NFT['name']+" - "+str(NFT['offerPrice'])+" "+NFT['quoteCurrency'])
+                token_id = NFT['ethTokenId']
+                ftx_price = NFT['offerPrice']
+
+                if last_token_id != token_id:
+                    last_token_id = token_id
+                    try:
+                        #print("sleeping")
+                        #time.sleep(5)
+                        os_url=base_os_url+asset_contract_address+'/'+token_id
+                        response = requests.request("GET", os_url, headers={"Accept": "application/json"})
+                        # print(response.json()['last_sale']['total_price'])
+                        os_price = int(response.json()['last_sale']['total_price'])/1000000000000000000
+                        
+                        if os_price>ftx_price:
+                            rake = 0.125 #10% take from parallel, 2.5% opensea
+                            profit = round(os_price-ftx_price,2)
+                            true_profit = round(os_price-(os_price*rake)-ftx_price,2)
+                            print("ARB FOUND!")
+                            print("FTX: "+NFT['name']+" - "+str(ftx_price)+" "+NFT['quoteCurrency'])
+                            print("OS : "+NFT['name']+" - "+str(os_price)+" ETH")
+                            print("Potential Profit:"+str(profit))
+                            print("True Profit:"+str(true_profit))
+
+                    except json.decoder.JSONDecodeError:
+                        print("Can't reach opensea.")
         except json.decoder.JSONDecodeError:
             print("Can't reach ftx.")
 
-
-def main():
-    for collection in collections:
-        print("Monitoring : " + collection['collection'] +
-              " <= " + str(collection['price']) + " sol")
-        monitor_thread = threading.Thread(target=monitor, args=(
-            collection['collection'], collection['price'], collection['webhooks'],))
-        monitor_thread.start()
-
-
-main()
+if __name__ == "__main__":
+    main()

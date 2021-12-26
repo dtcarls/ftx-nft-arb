@@ -40,8 +40,8 @@ def main():
                                     largest_offer=offer
                         
                         if last_os_price>ftx_price:
-                            profit = round(last_os_price-ftx_price,2)
-                            true_profit = round(last_os_price-(last_os_price*rake)-ftx_price,2)
+                            profit = round(last_os_price-ftx_price,3)
+                            true_profit = round(last_os_price-(last_os_price*rake)-ftx_price,3)
                             print("ARB FOUND!")
                             print("FTX: "+NFT['name']+" - "+str(ftx_price)+" "+NFT['quoteCurrency'])
                             print("OS : "+NFT['name']+" - "+str(last_os_price)+" ETH")
@@ -49,8 +49,8 @@ def main():
                             print("Profit after rake:"+str(true_profit))
                         
                         if largest_offer>ftx_price:
-                            profit = round(largest_offer-ftx_price,2)
-                            true_profit = round(largest_offer-(largest_offer*rake)-ftx_price,2)
+                            profit = round(largest_offer-ftx_price,3)
+                            true_profit = round(largest_offer-(largest_offer*rake)-ftx_price,3)
                             print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ARB FOUND! XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                             print("FTX: "+NFT['name']+" - "+str(ftx_price)+" "+NFT['quoteCurrency'])
                             print("OS : "+NFT['name']+" - "+str(largest_offer)+" ETH")

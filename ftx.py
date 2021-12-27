@@ -16,7 +16,7 @@ def main():
             last_token_id=''
             for NFT in response.json()['result']['nfts']:
 
-                #print(NFT['ethTokenId']+" - "+NFT['name']+" - "+str(NFT['offerPrice'])+" "+NFT['quoteCurrency'])
+                # print(NFT['ethTokenId']+" - "+NFT['name']+" - "+str(NFT['offerPrice'])+" "+NFT['quoteCurrency'])
                 token_id = NFT['ethTokenId']
                 ftx_price = NFT['offerPrice']
 
@@ -26,14 +26,16 @@ def main():
                         os_url=base_os_url+asset_contract_address+'/'+token_id
                         response = requests.request("GET", os_url, headers={"Accept": "application/json"})
                         # print(response.json()['last_sale']['total_price'])
-                        rake = int(response.json()['orders'][0]['taker_relayer_fee'])/10000
+                        taker_fee = int(response.json()['orders'][0]['taker_relayer_fee'])
+                        maker_fee = int(response.json()['orders'][0]['maker_relayer_fee'])
+                        rake = max(taker_fee,maker_fee)/10000
                         last_os_price = int(response.json()['last_sale']['total_price'])/1000000000000000000
 
                         orders = response.json()['orders']
-                        #side 0 = offer
-                        #side 1 = listing
                         largest_offer = 0
                         for order in orders:
+                            #side 0 = offer
+                            #side 1 = listing
                             if order['side'] == 0:
                                 offer = (int(order['current_bounty'])/int(order['quantity']))/10000000000000000
                                 if offer>largest_offer:

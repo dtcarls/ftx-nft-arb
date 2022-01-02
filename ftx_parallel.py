@@ -13,6 +13,7 @@ def main():
         base_os_url = "https://api.opensea.io/api/v1/asset/"
         # Currently set to Parallel
         asset_contract_address = '0x76BE3b62873462d2142405439777e971754E8E77'
+        minimum_view = 0.01
 
         try:
             last_token_id = ''
@@ -52,12 +53,12 @@ def main():
                             profit = round(last_os_price-ftx_price, 3)
                             true_profit = round(
                                 last_os_price-(last_os_price*rake)-ftx_price, 3)
-                            if true_profit > 0:
+                            if true_profit > minimum_view:
                                 print("ARB FOUND!")
                                 print("FTX: "+NFT['name']+" - " +
-                                    str(ftx_price)+" "+NFT['quoteCurrency'])
+                                      str(ftx_price)+" "+NFT['quoteCurrency'])
                                 print("OS : "+NFT['name']+" - " +
-                                    str(last_os_price)+" ETH")
+                                      str(last_os_price)+" ETH")
                                 print("Potential Profit:"+str(profit))
                                 print("Profit after rake:"+str(true_profit))
 
@@ -65,7 +66,7 @@ def main():
                             profit = round(largest_offer-ftx_price, 3)
                             true_profit = round(
                                 largest_offer-(largest_offer*rake)-ftx_price, 3)
-                            if true_profit > 0:
+                            if true_profit > minimum_view:
                                 print(
                                     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ARB FOUND! XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                                 print(

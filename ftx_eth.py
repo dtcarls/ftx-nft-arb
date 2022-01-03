@@ -6,17 +6,22 @@ OS_MAPPING = {
     'Blitmap': 'blitmap',
     'Bored%20Ape%20Kennel%20Club': 'bored-ape-kennel-club',
     'Bored%20Ape%20Yacht%20Club': 'boredapeyachtclub',
+    'Capsule%20House': 'capsulehouse',
+    'Creature%20World': 'creatureworld',
     'CrypToadz%20by%20GREMPLIN': 'cryptoadz-by-gremplin',
     'CryptoKitties': 'cryptokitties',
     'CryptoPunks': 'cryptopunks',
     'DeadFellaz': 'deadfellaz',
     'Depictives': 'depictives',
     'Doodles': 'doodles-official',
+    'Forgotten%20Runes%20Wizards%20Cult': 'forgottenruneswizardscult',
+    'Little%20Lemon%20Friends': 'little-lemon-friends',
     'loomlocknft%20%28Wassies%29': 'loomlock',
     'Meebits': 'meebits',
     'Mutant%20Ape%20Yacht%20Club': 'mutant-ape-yacht-club',
     'OnChain%20Monkey': 'onchainmonkey',
     'Parallel': 'parallelalpha',
+    'Parallel%20Alpha': 'parallelalpha',
     'Pudgy%20Penguins': 'pudgypenguins',
     'Somnium%20Space%20VR': 'somnium-space',
     'The%20Doge%20Pound': 'the-doge-pound',
@@ -55,14 +60,17 @@ def main():
             rake = requests.get('https://api.opensea.io/api/v1/asset_contract/' +
                                 contract_address).json()['opensea_seller_fee_basis_points']
             rake = rake*0.0001
-            os_collection = requests.get(
-                'https://api.opensea.io/api/v1/collection/'+OS_MAPPING[collection_name]+'/stats')
-            os_floor = os_collection.json()['stats']['floor_price']
-            #print(os_floor)
-            if os_floor and ftx_floor < os_floor:
-                diff = os_floor-ftx_floor
-                print("YATZEE")
-                print(collection_name+' '+str(diff))
+            if collection_name in OS_MAPPING:
+                os_collection = requests.get(
+                    'https://api.opensea.io/api/v1/collection/'+OS_MAPPING[collection_name]+'/stats')
+                os_floor = os_collection.json()['stats']['floor_price']
+                #print(os_floor)
+                if os_floor and ftx_floor < os_floor:
+                    diff = os_floor-ftx_floor
+                    print("YATZEE")
+                    print(collection_name+' '+str(diff))
+            else:
+                print("Missing dictionary entry:"+collection_name)
 
 
 if __name__ == "__main__":

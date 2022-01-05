@@ -66,9 +66,10 @@ def main():
                 os_floor = os_collection.json()['stats']['floor_price']
                 #print(os_floor)
                 if os_floor and ftx_floor < os_floor:
-                    diff = os_floor-ftx_floor
-                    print("YATZEE")
+                    diff = round(os_floor-ftx_floor,2)
+                    print("--------------------YATZEE--------------------")
                     print(collection_name+' '+str(diff))
+                    print("----------------------------------------------")
             else:
                 print("Missing dictionary entry:"+collection_name)
 

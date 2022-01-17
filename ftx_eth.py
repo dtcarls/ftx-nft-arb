@@ -26,6 +26,7 @@ OS_MAPPING = {
     'Somnium%20Space%20VR': 'somnium-space',
     'The%20Doge%20Pound': 'the-doge-pound',
     'the%20littles%20NFT': 'thelittlesnft',
+    'Thingdoms': 'thingdoms',
     'Wonky%20Stonks': 'wonky-stonks',
     'World%20of%20Women': 'world-of-women-nft'
 }

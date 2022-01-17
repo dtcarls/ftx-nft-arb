@@ -4,7 +4,7 @@ import json
 
 def main():
 
-    MINIMUM_PROFIT_VIEW = 0.05
+    MINIMUM_PROFIT_VIEW = -0.05
 
     collections = ["Parallel", "Parallel Alpha"]
     
@@ -17,6 +17,12 @@ def main():
         base_os_url = "https://api.opensea.io/api/v1/asset/"
         # Currently set to Parallel
         asset_contract_address = '0x76BE3b62873462d2142405439777e971754E8E77'
+        header = {
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache",
+            "Accept": "application/json",
+            "X-API-KEY": ""
+        }
 
         try:
             last_token_id = ''
@@ -30,8 +36,10 @@ def main():
                     last_token_id = token_id
                     try:
                         os_url = base_os_url+asset_contract_address+'/'+token_id
-                        response = requests.request("GET", os_url, headers={
-                                                    "Accept": "application/json"})
+                        # os_url = os_url+"?format=json"
+                        # response = requests.request("GET", os_url, params={
+                        #                              "format": "json"})
+                        response = requests.request("GET", os_url, headers=header)
                         # print(response.json()['last_sale']['total_price'])
                         taker_fee = int(
                             response.json()['orders'][0]['taker_relayer_fee'])
@@ -40,7 +48,6 @@ def main():
                         rake = max(taker_fee, maker_fee)/10000
                         last_os_price = int(
                             response.json()['last_sale']['total_price'])/1000000000000000000
-
                         orders = response.json()['orders']
                         largest_offer = 0
                         for order in orders:

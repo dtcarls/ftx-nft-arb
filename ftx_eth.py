@@ -40,6 +40,12 @@ def get_contract_address(uri_safe_name):
 
 
 def main():
+    header = {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Accept": "application/json",
+        "X-API-KEY": ""
+    }
     collection_names = requests.get(
         'https://ftx.us/api/nft/collection_names?startInclusive=0&endExclusive=50&collectionType=eth')
     collection_names = collection_names.json()['result']['collections']
@@ -47,26 +53,26 @@ def main():
     collection_base_url = 'https://ftx.us/api/nft/collection/'
 
     for collection_name in collection_names:
-        #print(collection_name)
+        # print(collection_name)
         collection_name = urllib.parse.quote(collection_name)
         collection = requests.get(collection_base_url+collection_name)
         ftx_floor = collection.json()['result']['floor_price']
         floor_currency = collection.json()['result']['floor_price_currency']
 
         if ftx_floor:
-            #print(ftx_floor)
+            # print(ftx_floor)
             # print(collection_name+' - '+str(ftx_floor)+' '+floor_currency)
             contract_address = get_contract_address(collection_name)
             rake = requests.get('https://api.opensea.io/api/v1/asset_contract/' +
-                                contract_address).json()['opensea_seller_fee_basis_points']
+                                contract_address,headers=header).json()['opensea_seller_fee_basis_points']
             rake = rake*0.0001
             if collection_name in OS_MAPPING:
                 os_collection = requests.get(
-                    'https://api.opensea.io/api/v1/collection/'+OS_MAPPING[collection_name]+'/stats')
+                    'https://api.opensea.io/api/v1/collection/'+OS_MAPPING[collection_name]+'/stats',headers=header)
                 os_floor = os_collection.json()['stats']['floor_price']
-                #print(os_floor)
+                # print(os_floor)
                 if os_floor and ftx_floor < os_floor:
-                    diff = round(os_floor-ftx_floor,2)
+                    diff = round(os_floor-ftx_floor, 2)
                     print("--------------------YATZEE--------------------")
                     print(collection_name+' '+str(diff))
                     print("----------------------------------------------")

@@ -4,7 +4,7 @@ import json
 
 def main():
 
-    MINIMUM_PROFIT_VIEW = -0.05
+    MINIMUM_PROFIT_VIEW = 0.05
 
     collections = ["Parallel", "Parallel Alpha"]
     
@@ -58,6 +58,10 @@ def main():
                                     int(order['current_bounty'])/int(order['quantity']))/10000000000000000
                                 if offer > largest_offer:
                                     largest_offer = offer
+
+                        # print("last_os_price "+str(last_os_price))
+                        # print("ftx_price "+str(ftx_price))
+                        # print("largest_offer "+str(largest_offer))
 
                         if last_os_price > ftx_price:
                             profit = round(last_os_price-ftx_price, 3)

@@ -7,6 +7,7 @@ OS_MAPPING = {
     'Bored%20Ape%20Kennel%20Club': 'bored-ape-kennel-club',
     'Bored%20Ape%20Yacht%20Club': 'boredapeyachtclub',
     'Capsule%20House': 'capsulehouse',
+    'ChainFaces%20Arena': 'chainfaces-arena',
     'Creature%20World': 'creatureworld',
     'CrypToadz%20by%20GREMPLIN': 'cryptoadz-by-gremplin',
     'CryptoKitties': 'cryptokitties',
@@ -28,7 +29,8 @@ OS_MAPPING = {
     'the%20littles%20NFT': 'thelittlesnft',
     'Thingdoms': 'thingdoms',
     'Wonky%20Stonks': 'wonky-stonks',
-    'World%20of%20Women': 'world-of-women-nft'
+    'World%20of%20Women': 'world-of-women-nft',
+    'Worldwide%20Webb%20Land': 'worldwidewebbland'
 }
 
 
